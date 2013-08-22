@@ -55,7 +55,7 @@ public class WFSService extends OGCService {
 			OutputStream os = response.getOutputStream();
 
 			// copy from stream to response, filtering through xsl transform
-			copyThroughTransform(is,os, "/gov/usgs/ngwmn/geoserver-2-gwml.xsl");
+			copyThroughTransform(is,os, getTransformLocation());
 			logger.debug("done");
 		}
 		catch (Exception e) {
@@ -65,6 +65,10 @@ public class WFSService extends OGCService {
 		finally {
 			featureSource.close();
 		}
+	}
+
+	public String getTransformLocation() {
+		return "/gov/usgs/ngwmn/geoserver-2-gwml.xsl";
 	}
 	
 }

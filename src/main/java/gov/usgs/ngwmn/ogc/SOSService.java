@@ -96,7 +96,7 @@ public class SOSService extends OGCService {
 			OutputStream os = response.getOutputStream();
 
 			// copy from stream to response, filtering through xsl transform
-			copyThroughTransform(is,os, "/gov/usgs/ngwmn/wl2waterml2.xslt");
+			copyThroughTransform(is,os, getTransformLocation());
 			logger.debug("done");
 		}
 		catch (IOException ioe) {
@@ -109,6 +109,11 @@ public class SOSService extends OGCService {
 		finally {
 			source.close();
 		}
+	}
+
+	@Override
+	public String getTransformLocation() {
+		return "/gov/usgs/ngwmn/wl2waterml2.xslt";
 	}
 		
 	// TODO Make param names case-insensitive (might require use of filter)

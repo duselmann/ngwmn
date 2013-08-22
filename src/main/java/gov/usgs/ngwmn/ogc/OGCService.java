@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.io.CountingInputStream;
 import com.google.common.io.CountingOutputStream;
 
-public class OGCService {
+public abstract class OGCService {
 
 	private String geoserverURL;
 	
@@ -77,5 +77,7 @@ public class OGCService {
 		this.geoserverURL = gsURL;
 		logger.info("Will use geoserver URL {}", this.geoserverURL);
 	}
+
+	public abstract String getTransformLocation();
 
 }
