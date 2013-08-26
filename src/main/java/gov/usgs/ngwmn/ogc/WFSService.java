@@ -4,6 +4,7 @@ import gov.usgs.ngwmn.NotImplementedException;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.MessageFormat;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -31,8 +32,8 @@ public class WFSService extends OGCService {
 	
 	// GetFeatureOfInterest
 	// implement on geoserver, with output transformed to gwml
-	@RequestMapping(params={"REQUEST=GetFeature"})
-	public void getFeature(
+	@RequestMapping(params={"REQUEST=GetFeature","FID"})
+	public void getFeatureByID(
 			@RequestParam("FID") String featureOfInterest,
 			HttpServletResponse response
 			)
@@ -47,6 +48,44 @@ public class WFSService extends OGCService {
 		
 		featureSource.addParameter("featureID", featureOfInterest);
 		logger.debug("Added filter featureID={}", featureOfInterest);
+		
+		try {
+			InputStream is = featureSource.getStream();
+			
+			response.setContentType("text/xml");
+			OutputStream os = response.getOutputStream();
+
+			// copy from stream to response, filtering through xsl transform
+			copyThroughTransform(is,os, getTransformLocation());
+			logger.debug("done");
+		}
+		catch (Exception e) {
+			logger.warn("Problem", e);
+			throw e;
+		}
+		finally {
+			featureSource.close();
+		}
+	}
+
+	// GetFeatureOfInterest
+	// implement on geoserver, with output transformed to gwml
+	@RequestMapping(params={"REQUEST=GetFeature","bbox","srsName"})
+	public void getFeatureByBBOX(
+			@RequestParam("bbox") String bbox,
+			@RequestParam("srsName") String srsName,
+			HttpServletResponse response
+			)
+		throws Exception
+	{
+		GeoserverFeatureSource featureSource = new GeoserverFeatureSource(getGeoserverURL());
+		
+		logger.info("GetFeatureByBBOX");
+						
+		featureSource.addParameter("srsName", srsName);
+		featureSource.addParameter("bbox", bbox);
+		
+		logger.debug("added bbox param {} with srs {}", bbox, srsName);
 		
 		try {
 			InputStream is = featureSource.getStream();

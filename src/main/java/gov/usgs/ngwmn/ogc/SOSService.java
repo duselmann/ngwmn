@@ -40,6 +40,7 @@ public class SOSService extends OGCService {
 	public static final String BOUNDING_BOX_PREFIX = "om:featureOfInterest/*/sams:shape";
 	
 	static private Logger logger = LoggerFactory.getLogger(SOSService.class);
+	public final String sosFeatureXformName = "/gov/usgs/ngwmn/geoserver-2-sos.xsl";
 
 	@RequestMapping(params={"REQUEST=GetCapabilities"})
 	public void getCapabilities(
@@ -185,8 +186,7 @@ public class SOSService extends OGCService {
 			response.setContentType("text/xml");
 			OutputStream os = response.getOutputStream();
 
-			// copy from stream to response, filtering through xsl transform
-			copyThroughTransform(is,os, "/gov/usgs/ngwmn/geoserver-2-sos.xsl");
+			copyThroughTransform(is,os, sosFeatureXformName);
 			logger.debug("done");
 		}
 		catch (Exception e) {

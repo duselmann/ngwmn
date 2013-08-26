@@ -22,7 +22,7 @@ public class GeoserverFeatureSource implements Closeable {
 
 	private HttpClient client;
 	private PostMethod method;
-	
+		
 	public GeoserverFeatureSource(String base) {
 		baseURL = base;
 	}
@@ -36,6 +36,7 @@ public class GeoserverFeatureSource implements Closeable {
 	public InputStream getStream() throws Exception {
 		// generate params for GeoServer WFS request, example:
 		/*		SERVICE:WFS
+		 		request=GetFeature
 				VERSION:1.0.0
 				srsName:EPSG:4326
 				outputFormat:GML2
@@ -43,12 +44,13 @@ public class GeoserverFeatureSource implements Closeable {
 				CQL_FILTER:((QW_SN_FLAG = '1') OR (WL_SN_FLAG = '1')) AND (BBOX(GEOM,-101.333008,34.269568,-99.838867,35.459421))
 				*/
 		client = new HttpClient();
-		method = new PostMethod(baseURL + "/wfs?request=GetFeature");
+		method = new PostMethod(baseURL + "/wfs");
+		method.addParameter("request","GetFeature");
 		method.addParameter("SERVICE", "WFS");
-		method.addParameter("VERSION", "1.0.0");
+		method.addParameter("VERSION", "1");
 		method.addParameter("outputFormat","GML2");
 		method.addParameter("typeName","ngwmn:VW_GWDP_GEOSERVER");
-
+		
 		for (NameValuePair nvp : extraParams) {
 			method.addParameter(nvp);
 		}
