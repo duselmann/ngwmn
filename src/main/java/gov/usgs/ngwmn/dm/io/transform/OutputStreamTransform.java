@@ -28,12 +28,12 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 
-public abstract class OutputStreamTransform 
-	extends FilterOutputStream 
-	implements HeaderWriter
-	{
+public abstract class OutputStreamTransform
+extends FilterOutputStream
+implements HeaderWriter
+{
 	protected final transient Logger logger = LoggerFactory.getLogger(getClass());
-	
+
 	private OutputStream    pout;
 	protected boolean 		writtenHeaders;
 	private Future<Long>    parserResult;
@@ -46,8 +46,8 @@ public abstract class OutputStreamTransform
 	protected final List<HeaderWrittenListener> headerListeners;
 
 	public abstract String formatRow(List<Element> headers, Map<String, String> rowData);
-	
-	
+
+
 	public OutputStreamTransform(OutputStream out) throws IOException {
 		super(out);
 		logger.trace("transform upstream: {}", out.toString());
@@ -56,7 +56,13 @@ public abstract class OutputStreamTransform
 		rows     = new LinkedBlockingQueue<Map<String,String>>();
 		headerListeners = new LinkedList<HeaderWrittenListener>();
 	}
-	
+	@Override
+	protected void finalize() throws Throwable {
+		// this shutdown should allow queued and running jobs to finish
+		executor.shutdown();
+	}
+
+
 	public void skipHeaders(boolean skipHeaders) {
 		writtenHeaders = skipHeaders;
 	}
@@ -67,66 +73,67 @@ public abstract class OutputStreamTransform
 	private void initParser(final Parser parser) {
 		logger.trace("initParser rows from {}", System.identityHashCode(rows));
 		logger.trace("initParser transformer {}",  System.identityHashCode(OutputStreamTransform.this));
-		
+
 		final PipedInputStream pin  = new PipedInputStream();
 		try {
 			pout = new PipedOutputStream(pin);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		
+
 		final Map<?,?> mdc = MDC.getCopyOfContextMap();
 
 		Callable<Long> exec = new Callable<Long>() {
+			@Override
 			public Long call() throws Exception {
-	    		long count=0;
-	    		try {
+				long count=0;
+				try {
 					MDC.setContextMap((mdc == null) ? Collections.emptyMap() : mdc);
-	    			
-	    			logger.trace("InputStream parser init started id-{} {}", id, OutputStreamTransform.this);
-	    			parser.setInputStream(pin);
-	    			logger.trace("InputStream parser init finished {}", this);
 
-	    			logger.trace("parser started  {}", this);
-	    			Map<String,String> row;
-	    			while ( (row=parser.nextRow()) != null ) {
-	    				// we have to update headers every time because new headers could be discovered
-	    				// we also have another thread consuming rows as they are added 
-	    				// so that thread needs headers as soon as there are rows
-	    				headers.set( new ArrayList<Element>( parser.headers() ) );
+					logger.trace("InputStream parser init started id-{} {}", id, OutputStreamTransform.this);
+					parser.setInputStream(pin);
+					logger.trace("InputStream parser init finished {}", this);
 
-	    				// add the new row to the row cache
-	    				Map<String,String> newRow = new HashMap<String,String>();
-	    				newRow.putAll(row);
-	    				rows.add(newRow);
-	    				count++;
-	    				logger.trace("parser row {}:{} ", count, newRow);
-	    			}
-	    			logger.trace("parser rows final {}",  rows);
-	    			logger.trace("parser finished {} {}", count, this);
-	    		} finally {
+					logger.trace("parser started  {}", this);
+					Map<String,String> row;
+					while ( (row=parser.nextRow()) != null ) {
+						// we have to update headers every time because new headers could be discovered
+						// we also have another thread consuming rows as they are added
+						// so that thread needs headers as soon as there are rows
+						headers.set( new ArrayList<Element>( parser.headers() ) );
+
+						// add the new row to the row cache
+						Map<String,String> newRow = new HashMap<String,String>();
+						newRow.putAll(row);
+						rows.add(newRow);
+						count++;
+						logger.trace("parser row {}:{} ", count, newRow);
+					}
+					logger.trace("parser rows final {}",  rows);
+					logger.trace("parser finished {} {}", count, this);
+				} finally {
 					MDC.clear();
 				}
-	    		return count;
+				return count;
 			}
 		};
 		parserResult = executor.submit(exec);
 	}
 
 	@Override
-    public void write(byte[] b, int off, int len) throws IOException {
+	public void write(byte[] b, int off, int len) throws IOException {
 		logger.trace("write bytes len {}", len );
-    	pout.write(b, off, len);
-    	processRow();
-    }
+		pout.write(b, off, len);
+		processRow();
+	}
 
 	@Override
-    public void write(int b) throws IOException {
-    	pout.write(b);
-    	processRow();
-    }
-    
-    private void processRow() throws IOException {
+	public void write(int b) throws IOException {
+		pout.write(b);
+		processRow();
+	}
+
+	private void processRow() throws IOException {
 
 		Map<String, String> row = rows.poll();
 		if (row != null) {
@@ -135,12 +142,12 @@ public abstract class OutputStreamTransform
 				writeRow(headList);
 				signalHeaderListeners();
 			}
-	    	logger.trace("processing row");
+			logger.trace("processing row");
 			writeRow(headList, row);
 		}
 	}
 
-    
+
 	private void writeRow(List<Element> headers, Map<String, String> rowData) throws IOException {
 		String rowText = formatRow(headers, rowData);
 		logger.trace("writeRow data: {}", rowText);
@@ -160,49 +167,49 @@ public abstract class OutputStreamTransform
 		logger.trace("processRow transformer id-{} {}", id,
 				System.identityHashCode(OutputStreamTransform.this));
 
-    	while ( ! rows.isEmpty() || ! parserResult.isDone() ) {
-    		processRow();
-    	}
-    	try {
-    		long ct = parserResult.get(100, TimeUnit.MILLISECONDS);
-    		logger.debug("done with rows, ct={}", ct);
-    	} catch (Exception e) {
-    		logger.warn("Problem encountered in OutputStreamTransform.finish", e);
-    	}
-		
+		while ( ! rows.isEmpty() || ! parserResult.isDone() ) {
+			processRow();
+		}
+		try {
+			long ct = parserResult.get(100, TimeUnit.MILLISECONDS);
+			logger.debug("done with rows, ct={}", ct);
+		} catch (Exception e) {
+			logger.warn("Problem encountered in OutputStreamTransform.finish", e);
+		}
+
 		logger.trace("finished processing cached rows");
 	}
-	
+
 	@Override
-    public void close() throws IOException {
+	public void close() throws IOException {
 		try {
 			logger.trace("closing transformer");
 			pout.close(); // this must be done before flushing
 			// so that the pin knows that it no longer has to wait for more bytes
 			finish();
-	//		out.close(); // TODO see if we can reactivate this line
+			//		out.close(); // TODO see if we can reactivate this line
 		} catch (IOException e) {
 			throw e;
 		} catch (Exception e) {
 			throw new IOException(e);
 		}
-    }
+	}
 
 
-	
+
 	// when joining two or more results we only want to use the headers from
 	// the first source to preserve column ordinal.
 	public void setHeaders(List<Element> headers) {
 		overrideHeaders = headers;
 	}
-	
+
 	public List<Element> getHeaders() {
 		if (overrideHeaders == null) {
 			return headers.get();
 		}
 		return overrideHeaders;
 	}
-	
+
 	@Override
 	public boolean addHeaderListener(HeaderWrittenListener listener) {
 		if (listener != null) {

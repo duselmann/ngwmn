@@ -35,6 +35,12 @@ public class WaterlevelDataController {
 	public WaterlevelDataController() {
 	}
 
+	@Override
+	protected void finalize() throws Throwable {
+		// this shutdown should allow queued and running jobs to finish
+		pipelineExecutor.shutdown();
+	}
+
 	/** Produce waterlevels for the given site, in format expected by Dygraphs:
 	 * first line has headers: time,value
 	 * then data as comma-separated values, with negative values
@@ -47,20 +53,20 @@ public class WaterlevelDataController {
 	public void generateTable(
 			@PathVariable String agency,
 			@PathVariable String site,
-			HttpServletResponse response) 
-	throws IOException, ServletException {
-		
+			HttpServletResponse response)
+					throws IOException, ServletException {
+
 		Specifier spec = new Specifier(agency,site,WellDataType.WATERLEVEL);
-		
+
 		boolean exists = true;
 		try {
 			db.checkSiteExists(spec);
 		} catch (SiteNotFoundException snfe) {
 			exists = false;
 		}
-		
+
 		logger.info("Providing csv data for {}, exists? {}", spec, exists);
-		
+
 		if ( ! exists) {
 			// See if changing _ to space in agency name will fix it
 			// maybe it a problem with space in agency name?
@@ -71,22 +77,22 @@ public class WaterlevelDataController {
 			}
 			// don't check again, just let the downstream processing throw the error
 		}
-		
+
 		try {
 			db.checkSiteExists(spec);
 
 			WellRegistry well = registry.findByKey(agency, site);
 			Double altitude = (well != null) ? well.getAltVa() : null;
-			
+
 			response.setContentType("text/csv");
 			OutputStream os = response.getOutputStream();
-			
+
 			HydrographFilterStream hfos = new HydrographFilterStream(os);
 			hfos.setElevation(altitude);
 			hfos.setExecutor(pipelineExecutor);
-			
+
 			Supplier<OutputStream> supp = new SimpleSupplier<OutputStream>(hfos);
-			
+
 			db.fetchWellData(spec, supp);
 			logger.debug("Sent waterlevel csv for {} elev {}", spec, altitude);
 		}
@@ -99,7 +105,7 @@ public class WaterlevelDataController {
 		}
 
 	}
-	
+
 	protected Specification makeSpecification(Specifier well) {
 		Specification spec = new Specification();
 		spec.setBundled(false);
@@ -122,6 +128,6 @@ public class WaterlevelDataController {
 	public void setRegistry(WellRegistryDAO registry) {
 		this.registry = registry;
 	}
-	
-	
+
+
 }
