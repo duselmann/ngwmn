@@ -4,7 +4,6 @@ import gov.usgs.ngwmn.WellDataType;
 import gov.usgs.ngwmn.dm.io.EntryDescription;
 import gov.usgs.ngwmn.dm.io.FilenameEntry;
 import gov.usgs.ngwmn.dm.io.JoiningSupplier;
-import gov.usgs.ngwmn.dm.io.QualityQueryFlowFactory;
 import gov.usgs.ngwmn.dm.io.Supplier;
 import gov.usgs.ngwmn.dm.io.transform.TransformSupplier;
 import gov.usgs.ngwmn.dm.spec.Encoding;
@@ -13,8 +12,6 @@ import gov.usgs.ngwmn.dm.spec.Specification;
 import gov.usgs.ngwmn.dm.spec.WellListResolver;
 
 import java.io.OutputStream;
-
-import javax.sql.DataSource;
 
 
 public class SequentialJoiningAggregator extends SequentialFlowAggregator {

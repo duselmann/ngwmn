@@ -34,7 +34,7 @@ public class WaterlevelStatsController {
 
 	private FetchStatsDAO dao;
 	private WellRegistryDAO wellDao;
-	
+
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	public static class Charter {
@@ -47,25 +47,25 @@ public class WaterlevelStatsController {
 		public void setAgency(String agency) {
 			this.agency = agency;
 		}
-		
+
 	}
-	
+
 	// TODO Eliminate this (here only to make form:form tag work)
 	@ModelAttribute("charter")
 	public Charter getModel() {
 		return new Charter();
 	}
-	
+
 	@RequestMapping("chart")
 	public String showChart(
 			@ModelAttribute("agency") String agency
-	) {
+			) {
 		return "waterlevel/chart";
 	}
 
 	@RequestMapping("timechart")
 	public String showTimeChart(
-	) {
+			) {
 		return "waterlevel/timechart";
 	}
 
@@ -77,90 +77,91 @@ public class WaterlevelStatsController {
 
 	@RequestMapping("table")
 	public void generateTable(
-			HttpServletRequest request, 
-			HttpServletResponse response) 
-	throws IOException {
+			HttpServletRequest request,
+			HttpServletResponse response)
+					throws IOException {
 		FetchStatsAgencyGenerator gen = new FetchStatsAgencyGenerator(dao);
 		DataSourceHelper.executeDataSourceServletFlow(request, response, gen, false);
 	}
 
 	// TODO Handle table/all, which should produce a separate data series (i.e. column) for each agency
 	// (or use "pivot" operation in data query, https://developers.google.com/chart/interactive/docs/querylanguage#Pivot)
-	
+
 	@RequestMapping("table/{agency}")
 	public void generateTable(
 			@PathVariable String agency,
-			HttpServletRequest request, 
-			HttpServletResponse response) 
-	throws IOException {
+			HttpServletRequest request,
+			HttpServletResponse response)
+					throws IOException {
 		FetchStatsAgencyGenerator gen = new FetchStatsAgencyGenerator(dao);
 		gen.setAgency(agency);
 		DataSourceHelper.executeDataSourceServletFlow(request, response, gen, false);
 	}
-	
+
 	@RequestMapping("stats")
 	public void statsTable(
-			HttpServletRequest request, 
+			HttpServletRequest request,
 			HttpServletResponse response
 			)
-	throws IOException
-	{
+					throws IOException
+					{
 		StatsTableGenerator gen = new StatsTableGenerator(dao);
 		DataSourceHelper.executeDataSourceServletFlow(request, response, gen, false);
-	}
-	
+					}
+
 	@RequestMapping("fetchdates")
 	public String showFetchDates(
-	) {
+			) {
 		return "waterlevel/fetchdates";
 	}
 
 	@RequestMapping("age")
 	public void ageTable(
-			HttpServletRequest request, 
+			HttpServletRequest request,
 			HttpServletResponse response
 			)
-	throws IOException
-	{
+					throws IOException
+					{
 		FetchDataAgeGenerator gen = new FetchDataAgeGenerator(dao);
 		DataSourceHelper.executeDataSourceServletFlow(request, response, gen, false);
-	}
+					}
 
 	@RequestMapping(value="data/{agency}", produces="text/csv")
 	public void exportData(
 			@PathVariable String agency,
 			final Writer writer
 			)
-	throws SQLException, IOException
-	{
+					throws SQLException, IOException
+					{
 		ResultSetExtractor<Void> rse = new ResultSetExtractor<Void>() {
 
 			@Override
 			public Void extractData(ResultSet rs) throws SQLException,
-					DataAccessException {
+			DataAccessException {
+				@SuppressWarnings("resource") // managed by pipeline
 				CSVWriter cw = new CSVWriter(writer);
 				try {
 					cw.writeAll(rs, true);
 				} catch (IOException e) {
 					throw new RuntimeException(e);
 				}
-				
+
 				return null;
 			}
 		};
-		
+
 		dao.viewData(agency, rse);
-	}
-	
+					}
+
 	@RequestMapping(value="data", produces="text/csv")
 	public void exportAllData(
 			Writer 		writer
-			) 
-	throws SQLException, IOException
-	{
+			)
+					throws SQLException, IOException
+					{
 		exportData(null, writer);
-	}
-	
+					}
+
 	public void setDao(FetchStatsDAO dao) {
 		this.dao = dao;
 	}

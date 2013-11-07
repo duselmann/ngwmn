@@ -1,8 +1,6 @@
 package gov.usgs.ngwmn.dm.io.transform;
 
 import static gov.usgs.ngwmn.WellDataType.WATERLEVEL;
-import static gov.usgs.ngwmn.WellDataType.LITHOLOGY;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;

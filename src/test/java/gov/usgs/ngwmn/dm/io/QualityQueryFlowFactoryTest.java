@@ -11,7 +11,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 
 import org.joda.time.DateMidnight;
-import org.joda.time.LocalDate;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

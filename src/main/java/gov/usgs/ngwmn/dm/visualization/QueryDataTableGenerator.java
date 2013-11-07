@@ -5,8 +5,6 @@ import java.sql.SQLException;
 import javax.sql.DataSource;
 
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.ResultSetExtractor;
-
 import com.google.visualization.datasource.datatable.DataTable;
 
 public class QueryDataTableGenerator extends SQLDataTableGenerator {

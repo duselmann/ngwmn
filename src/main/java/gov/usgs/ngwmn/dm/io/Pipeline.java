@@ -7,12 +7,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.concurrent.ExecutionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.io.ByteStreams;
 
 public class Pipeline implements Flow {
 	protected final transient Logger logger = LoggerFactory.getLogger(getClass());
@@ -21,16 +19,16 @@ public class Pipeline implements Flow {
 	private Supplier<OutputStream> oss;
 	private IOException    ioe;
 	private Invoker        invoker;
-	
+
 	private final Specifier      spec;
-	
-	
+
+
 	public Pipeline(Specifier sp) {
 		spec = sp;
 		invoker    = new CopyInvoker(); // it makes nice to have a default impl
 	}
-		
-	
+
+
 	public Specifier getSpecifier() {
 		return spec;
 	}
@@ -49,13 +47,13 @@ public class Pipeline implements Flow {
 	public Supplier<OutputStream> getOutputSupplier() {
 		return oss;
 	}
-	
+
 	public void addOutputSupplier(Supplier<OutputStream> supply) {
-		
+
 		if (oss != null) {
 			supply = new SupplyTeeOutput(supply, oss);
 		}
-		
+
 		setOutputSupplier(supply);
 	}
 	public void chainOutputSupplier(SupplyChain<OutputStream> supply) {
@@ -63,20 +61,21 @@ public class Pipeline implements Flow {
 		supply.setSupply(oss);
 		setOutputSupplier(supply);
 	}
-	
+
 	public void setInvoker(Invoker invoke) {
 		invoker = invoke;
 	}
-	
+
+	@Override
 	public Void call() throws IOException {
 		invoke();
 		return null;
 	}
-	
+
 	public boolean success() {
 		return ioe == null;
 	}
-	
+
 	public IOException getException() {
 		return ioe;
 	}
@@ -113,7 +112,7 @@ public class Pipeline implements Flow {
 					oss.end(threw);
 				}
 			}
-		// TODO maybe a catch here too?!
+			// TODO maybe a catch here too?!
 		} finally {
 			logger.debug("finally in Pipeline.invoke, threw={}, exception={}", threw, getException());
 			if (iss != null && iss.isInitialized()) {
@@ -122,5 +121,5 @@ public class Pipeline implements Flow {
 		}
 		return ct;
 	}
-	
+
 }

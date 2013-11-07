@@ -5,8 +5,6 @@ import java.io.OutputStream;
 
 import javax.xml.transform.Transformer;
 
-import org.joda.time.LocalDate;
-
 public class DirectQualityCSVOutputStream extends DirectCSVOutputStream {
 	
 	public DirectQualityCSVOutputStream(OutputStream out) throws IOException {

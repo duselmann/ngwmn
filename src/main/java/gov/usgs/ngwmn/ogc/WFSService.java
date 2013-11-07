@@ -4,8 +4,6 @@ import gov.usgs.ngwmn.NotImplementedException;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.text.MessageFormat;
-
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;

@@ -2,15 +2,8 @@ package gov.usgs.ngwmn.admin.stats;
 
 import static org.junit.Assert.*;
 
-import java.io.IOException;
 import java.io.StringWriter;
-import java.util.ArrayList;
-
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
-import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import org.junit.Test;
 
 public class JacksonTreeTest {

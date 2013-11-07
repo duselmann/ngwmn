@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping("/jit")
 public class JITDataController {
-	
+
 	private static final WellDataType[] WDTT = { WellDataType.LOG, WellDataType.QUALITY, WellDataType.WATERLEVEL };
 
 	private WellRegistryDAO wellDao;
@@ -35,43 +35,44 @@ public class JITDataController {
 	private FetchStatsDAO forWDT(WellDataType wdt) {
 		switch (wdt) {
 		case LOG: return wellLogStatsDAO;
-		
+
 		case QUALITY: return qualityStatsDAO;
-		
+
 		case WATERLEVEL: return waterlevelStatsDAO;
+		default: // TODO UNHANDLED ENUM TYPES
 		}
-		
+
 		return null;
 	}
-	
+
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	@RequestMapping("tree/{day}")
 	@ResponseBody
 	public JitTree getTree(@PathVariable @DateTimeFormat(iso=ISO.DATE) Date day) {
-		
+
 		// top level is a container
 		JitTree base = new JitTree("CacheStatistics");
-		
+
 		// next is agencies
 		List<String> agencies = wellDao.agencies();
 		for (String a : agencies) {
 			JitTree agency = agencyResults(a, day);
 			base.addChild(agency);
 		}
-		
+
 		return base;
 	}
 
 	private JitTree agencyResults(String a, Date when) {
 		JitTree agency = new JitTree(a);
-		
+
 		for (WellDataType t : WDTT) {
 			// TODO check for network membership
 			JitTree ttree = results(a, t, when);
 			agency.addChild(ttree);
 		}
-				
+
 		return agency;
 	}
 
@@ -81,7 +82,7 @@ public class JITDataController {
 		public int empty;
 		public int attempt;
 	};
-	
+
 	private JitTree results(String agency, WellDataType wdt, final Date when) {
 		ResultSetExtractor<ResultCounts> rse = new ResultSetExtractor<JITDataController.ResultCounts>() {
 
@@ -93,13 +94,13 @@ public class JITDataController {
 					return 0;
 				}
 			}
-			
+
 			@Override
 			public ResultCounts extractData(ResultSet rs) throws SQLException,
-					DataAccessException {
-				
+			DataAccessException {
+
 				ResultCounts val = null;
-								
+
 				while (rs.next()) {
 					if (val != null) {
 						logger.warn("Multiple results?");
@@ -113,7 +114,7 @@ public class JITDataController {
 				return val;
 			}
 		};
-		
+
 		ResultCounts rc = null;
 		FetchStatsDAO dao = forWDT(wdt);
 		if (dao != null) {
@@ -127,18 +128,18 @@ public class JITDataController {
 		if (rc == null) {
 			rc = new ResultCounts(); // all zero
 		}
-	
+
 		JitTree value = new JitTree(wdt.name());
-		
+
 		value.addChild(new JitTree("success", rc.success));
 		value.addChild(new JitTree("empty", rc.empty));
 		value.addChild(new JitTree("fail", rc.fail));
-		
+
 		// TODO add count of unfetched wells
-		
+
 		logger.debug("got counts {} for attempts {}", value.data.area, rc.attempt);
 		// value.data.area = rc.attempt;
-		
+
 		return value;
 	}
 
@@ -157,6 +158,6 @@ public class JITDataController {
 	public void setWellLogStatsDAO(FetchStatsDAO wellLogStatsDAO) {
 		this.wellLogStatsDAO = wellLogStatsDAO;
 	}
-	
-	
+
+
 }

@@ -31,22 +31,22 @@ import gov.usgs.ngwmn.dm.spec.Specifier;
 public abstract class QueryFlowFactory implements FlowFactory {
 
 	private DataSource datasource;
-	
+
 	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-	
+
 	public QueryFlowFactory(DataSource datasource) {
 		super();
 		this.datasource = datasource;
 	}
 
 	abstract String getQuery();
-	
+
 	/** Throw an exception if the type is not as expected
 	 * 
 	 * @param wellDataType
 	 */
 	abstract void checkType(WellDataType wellDataType);
-	
+
 	private class QueryFlow implements Flow {
 
 		private String agency;
@@ -54,7 +54,7 @@ public abstract class QueryFlowFactory implements FlowFactory {
 		private Date beginDate;
 		private Date endDate;
 		private Supplier<OutputStream> sos;
-		
+
 		QueryFlow(Specifier spec, Supplier<OutputStream> sos) {
 			agency = spec.getAgencyID();
 			site = spec.getFeatureID();
@@ -62,35 +62,36 @@ public abstract class QueryFlowFactory implements FlowFactory {
 			endDate = spec.getEndDate();
 			this.sos = sos;
 		}
-		
+
 		@Override
 		public Void call() throws Exception {
-			
+
 			Void valu;
 			OutputStream os = sos.begin();
-			
+
 			final Writer writer = new OutputStreamWriter(os);
 			try {
 				ResultSetExtractor<Void> rse = new ResultSetExtractor<Void>() {
-	
+
 					@Override
 					public Void extractData(ResultSet rs) throws SQLException,
-							DataAccessException {
+					DataAccessException {
+						@SuppressWarnings("resource") // managed by pipeline
 						CSVWriter cw = new CSVWriter(writer);
 						try {
 							cw.writeAll(rs, true);
 						} catch (IOException e) {
 							throw new RuntimeException(e);
 						}
-						
+
 						return null;
 					}
 				};
-				
+
 				String query = getQuery();
-	
+
 				JdbcTemplate t = new JdbcTemplate(datasource);
-				
+
 				String bd_s = null;
 				if (beginDate != null) {
 					bd_s = sdf.format(beginDate);
@@ -103,18 +104,18 @@ public abstract class QueryFlowFactory implements FlowFactory {
 			} finally {
 				writer.close();
 			}
-			
+
 			return valu;
 		}
-		
+
 	}
-	
+
 	@Override
 	public Flow makeFlow(Specifier spec, Supplier<OutputStream> out)
 			throws IOException {
-		
+
 		checkType(spec.getTypeID());
-		
+
 		return new QueryFlow(spec,out);
 	}
 

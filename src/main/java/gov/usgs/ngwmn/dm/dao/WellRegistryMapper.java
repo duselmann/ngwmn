@@ -1,10 +1,6 @@
 package gov.usgs.ngwmn.dm.dao;
 
 import java.util.List;
-import java.util.Map;
-
-import org.apache.ibatis.annotations.MapKey;
-import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.Select;
 
