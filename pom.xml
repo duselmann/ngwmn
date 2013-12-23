@@ -312,6 +312,8 @@
 		        		<include>**/*IntegrationTest.java</include>
 		        	</includes>
 		        	<excludes>
+                        <!-- too dependent on data -->
+                        <exclude>**/FetchLogDaoMonitorTests.java</exclude>
 		        		<!-- too dependent on data providers -->
 		        		<exclude>**/PrefetchControllerIntegrationTest.java</exclude>
 		        		<!-- TODO set environment to prevent scheduled jobs from running...  -->

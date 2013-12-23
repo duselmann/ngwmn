@@ -23,6 +23,19 @@
 	<context:annotation-config/>
 	
 	<import resource="prefetchContext.xml"/>
+
+	<bean id="jmailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="${ngwmn_smtp_host:localhost}" />
+	</bean>
+	<bean id="errorReportTemplate" class="org.springframework.mail.SimpleMailMessage">
+		<property name="from"    value="gwdp_help@usgs.gov" />
+		<property name="subject" value="NGWMN Data Portal Error Report" />
+	</bean>
+	<bean id="errorReportSender" class="gov.usgs.ngwmn.dm.ErrorReportSender">
+		<property name="jmailSender"        ref="jmailSender" />
+		<property name="messageTemplate"    ref="errorReportTemplate" />
+		<property name="errorReportBuilder" ref="errorReportBuilder" />
+	</bean>
 	
 	<bean id="geoserver-proxy-forward-url" class="java.lang.String">
 		<constructor-arg value="${GWDP_Portal/geoserver-proxy-forward-url:http://cida-wiwsc-ngwmndev.er.usgs.gov:8081/ngwmn-geoserver/ngwmn}"/>
@@ -63,8 +76,7 @@
 		<property name="dataSource" ref="dataSource"/>
 	</bean>
 	
-	<bean id="FetchRecorder"
-		class="gov.usgs.ngwmn.dm.io.FetchRecorder">
+	<bean id="FetchRecorder" class="gov.usgs.ngwmn.dm.io.FetchRecorder">
 		<property name="dao" ref="FetchLogDAO"/>
 	</bean>
 	
@@ -79,6 +91,11 @@
  		factory-method="aspectOf">
  		<property name="eventBus" ref="FetchEventBus"/>
  	</bean>
+
+	<bean id="errorReportBuilder" class="gov.usgs.ngwmn.dm.ErrorReportBuilder">
+		<property name="dao" ref="FetchLogDAO"/>
+	</bean>
+    
 		
 	<jee:jndi-lookup id="FSCache.basedir" 
 		jndi-name="java:comp/env/GWDP/FileCache/basedir" 

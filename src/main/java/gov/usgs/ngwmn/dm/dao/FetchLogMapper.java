@@ -34,7 +34,7 @@ public interface FetchLogMapper {
 	 * @mbggenerated  Fri May 25 11:07:09 CDT 2012
 	 */
 	@Delete({ "delete from GW_DATA_PORTAL.FETCH_LOG",
-			"where FETCHLOG_ID = #{fetchlogId,jdbcType=NUMERIC}" })
+	"where FETCHLOG_ID = #{fetchlogId,jdbcType=NUMERIC}" })
 	int deleteByPrimaryKey(Integer fetchlogId);
 
 	/**
@@ -42,18 +42,18 @@ public interface FetchLogMapper {
 	 * @mbggenerated  Fri May 25 11:07:09 CDT 2012
 	 */
 	@Insert({
-			"insert into GW_DATA_PORTAL.FETCH_LOG (FETCHLOG_ID, AGENCY_CD, ",
-			"SITE_NO, DATA_SOURCE, ",
-			"STARTED_AT, STATUS, ",
-			"PROBLEM, CT, ELAPSED_SEC, ",
-			"SPECIFIER, FETCHER, ",
-			"DATA_STREAM)",
-			"values (#{fetchlogId,jdbcType=NUMERIC}, #{agencyCd,jdbcType=VARCHAR}, ",
-			"#{siteNo,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR}, ",
-			"#{startedAt,jdbcType=TIMESTAMP}, #{status,jdbcType=CHAR}, ",
-			"#{problem,jdbcType=VARCHAR}, #{ct,jdbcType=NUMERIC}, #{elapsedSec,jdbcType=FLOAT}, ",
-			"#{specifier,jdbcType=VARCHAR}, #{fetcher,jdbcType=VARCHAR}, ",
-			"#{dataStream,jdbcType=VARCHAR})" })
+		"insert into GW_DATA_PORTAL.FETCH_LOG (FETCHLOG_ID, AGENCY_CD, ",
+		"SITE_NO, DATA_SOURCE, ",
+		"STARTED_AT, STATUS, ",
+		"PROBLEM, CT, ELAPSED_SEC, ",
+		"SPECIFIER, FETCHER, ",
+		"DATA_STREAM)",
+		"values (#{fetchlogId,jdbcType=NUMERIC}, #{agencyCd,jdbcType=VARCHAR}, ",
+		"#{siteNo,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR}, ",
+		"#{startedAt,jdbcType=TIMESTAMP}, #{status,jdbcType=CHAR}, ",
+		"#{problem,jdbcType=VARCHAR}, #{ct,jdbcType=NUMERIC}, #{elapsedSec,jdbcType=FLOAT}, ",
+		"#{specifier,jdbcType=VARCHAR}, #{fetcher,jdbcType=VARCHAR}, ",
+	"#{dataStream,jdbcType=VARCHAR})" })
 	int insert(FetchLog record);
 
 	/**
@@ -73,11 +73,11 @@ public interface FetchLogMapper {
 	 * @mbggenerated  Fri May 25 11:07:09 CDT 2012
 	 */
 	@Select({
-			"select",
-			"FETCHLOG_ID, AGENCY_CD, SITE_NO, DATA_SOURCE, STARTED_AT, STATUS, PROBLEM, CT, ",
-			"ELAPSED_SEC, SPECIFIER, FETCHER, DATA_STREAM",
-			"from GW_DATA_PORTAL.FETCH_LOG",
-			"where FETCHLOG_ID = #{fetchlogId,jdbcType=NUMERIC}" })
+		"select",
+		"FETCHLOG_ID, AGENCY_CD, SITE_NO, DATA_SOURCE, STARTED_AT, STATUS, PROBLEM, CT, ",
+		"ELAPSED_SEC, SPECIFIER, FETCHER, DATA_STREAM",
+		"from GW_DATA_PORTAL.FETCH_LOG",
+	"where FETCHLOG_ID = #{fetchlogId,jdbcType=NUMERIC}" })
 	@ResultMap("BaseResultMap")
 	FetchLog selectByPrimaryKey(Integer fetchlogId);
 
@@ -106,21 +106,21 @@ public interface FetchLogMapper {
 	 * @mbggenerated  Fri May 25 11:07:09 CDT 2012
 	 */
 	@Update({ "update GW_DATA_PORTAL.FETCH_LOG",
-			"set AGENCY_CD = #{agencyCd,jdbcType=VARCHAR},",
-			"SITE_NO = #{siteNo,jdbcType=VARCHAR},",
-			"DATA_SOURCE = #{source,jdbcType=VARCHAR},",
-			"STARTED_AT = #{startedAt,jdbcType=TIMESTAMP},",
-			"STATUS = #{status,jdbcType=CHAR},",
-			"PROBLEM = #{problem,jdbcType=VARCHAR},",
-			"CT = #{ct,jdbcType=NUMERIC},",
-			"ELAPSED_SEC = #{elapsedSec,jdbcType=FLOAT},",
-			"SPECIFIER = #{specifier,jdbcType=VARCHAR},",
-			"FETCHER = #{fetcher,jdbcType=VARCHAR},",
-			"DATA_STREAM = #{dataStream,jdbcType=VARCHAR}",
-			"where FETCHLOG_ID = #{fetchlogId,jdbcType=NUMERIC}" })
+		"set AGENCY_CD = #{agencyCd,jdbcType=VARCHAR},",
+		"SITE_NO = #{siteNo,jdbcType=VARCHAR},",
+		"DATA_SOURCE = #{source,jdbcType=VARCHAR},",
+		"STARTED_AT = #{startedAt,jdbcType=TIMESTAMP},",
+		"STATUS = #{status,jdbcType=CHAR},",
+		"PROBLEM = #{problem,jdbcType=VARCHAR},",
+		"CT = #{ct,jdbcType=NUMERIC},",
+		"ELAPSED_SEC = #{elapsedSec,jdbcType=FLOAT},",
+		"SPECIFIER = #{specifier,jdbcType=VARCHAR},",
+		"FETCHER = #{fetcher,jdbcType=VARCHAR},",
+		"DATA_STREAM = #{dataStream,jdbcType=VARCHAR}",
+	"where FETCHLOG_ID = #{fetchlogId,jdbcType=NUMERIC}" })
 	int updateByPrimaryKey(FetchLog record);
 
-	@SelectKey(statement="select gw_data_portal.fetch_log_seq.nextval from dual", resultType = int.class, before = true, keyProperty = "fetchlogId") 
+	@SelectKey(statement="select gw_data_portal.fetch_log_seq.nextval from dual", resultType = int.class, before = true, keyProperty = "fetchlogId")
 	@Insert({
 		"insert into GW_DATA_PORTAL.FETCH_LOG (FETCHLOG_ID, AGENCY_CD, ",
 		"SITE_NO, DATA_SOURCE, ",
@@ -131,10 +131,10 @@ public interface FetchLogMapper {
 		"#{siteNo,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR}, ",
 		"#{startedAt,jdbcType=TIMESTAMP}, #{status,jdbcType=CHAR}, ",
 		"#{problem,jdbcType=VARCHAR}, #{ct,jdbcType=NUMERIC}, #{elapsedSec,jdbcType=FLOAT}, ",
-		"#{specifier,jdbcType=VARCHAR}, #{fetcher,jdbcType=VARCHAR}, #{dataStream,jdbcType=VARCHAR})" })
+	"#{specifier,jdbcType=VARCHAR}, #{fetcher,jdbcType=VARCHAR}, #{dataStream,jdbcType=VARCHAR})" })
 	@Options(useGeneratedKeys=true, keyProperty="fetchlogId", keyColumn="FETCHLOG_ID")
 	int insertId(FetchLog record);
-	
+
 	@Select({
 		"select * from ",
 		"(SELECT FETCHLOG_ID, AGENCY_CD, SITE_NO, DATA_SOURCE, STARTED_AT, STATUS, PROBLEM, CT, ",
@@ -145,10 +145,10 @@ public interface FetchLogMapper {
 		" ORDER BY STARTED_AT DESC ",
 		") ",
 		"WHERE ROWNUM = 1 ",
-		""})
+	""})
 	@ResultMap("BaseResultMap")
 	FetchLog selectLatestByWell(@Param("agency_cd") String agency_cd, @Param("site_no") String site_no);
-	
+
 	@Select({
 		"select agency_cd, data_stream, status, count(*) ct, avg(elapsed_sec) avg",
 		"from gw_data_portal.fetch_log",
@@ -156,7 +156,7 @@ public interface FetchLogMapper {
 		"and started_at between (#{day,jdbcType=DATE} - 12/24) and (#{day,jdbcType=DATE} + 12/24)",
 		"group by agency_cd, data_stream, status",
 		"order by agency_cd, data_stream, status",
-		""})
+	""})
 	List<Map<String,Object>> statisticsByDay(@Param("day") Date day);
 
 	/* Ordering by SPECIFIER as a proxy to DATA_SOURCE, seems that is null */
@@ -166,7 +166,101 @@ public interface FetchLogMapper {
 		" from GW_DATA_PORTAL.FETCH_LOG",
 		" where AGENCY_CD = #{agency_cd} and SITE_NO = #{site_no} ",
 		" ORDER BY SPECIFIER, STARTED_AT DESC ",
-		""})
+	""})
 	@ResultMap("BaseResultMap")
 	List<FetchLog> fetchHistory(@Param("agency_cd") String agency_cd, @Param("site_no") String site_no);
+
+
+	@Select({
+		"select * from (",
+		" select m.*,f.status,f.problem ",
+		"   from ",
+		"       (select max(fetchlog_id) as fetchlog_id, ",
+		"               agency_cd, site_no, data_stream ",
+		"          from GW_DATA_PORTAL.fetch_log ",
+		"         group by agency_cd, site_no, data_stream) m ",
+		"   join GW_DATA_PORTAL.fetch_log f  ",
+		"     on f.fetchlog_id=m.fetchlog_id ",
+		"  where f.started_at > sysdate-#{days} ",
+		"    and problem is not null ",
+		" union ",
+		" select m.*,f.status,f.problem ",
+		"   from ",
+		"       (select max(fetchlog_id) as fetchlog_id, ",
+		"               agency_cd, site_no, data_stream ",
+		"          from GW_DATA_PORTAL.fetch_log ",
+		"         group by agency_cd, site_no, data_stream) m ",
+		"   join GW_DATA_PORTAL.fetch_log f  ",
+		"     on f.fetchlog_id=m.fetchlog_id ",
+		"  where f.started_at > sysdate-#{days} ",
+		"    and status = 'EMPY' ",
+		") order by agency_cd, site_no, data_stream",
+	""})
+	@ResultMap("BaseResultMap")
+	// returns the problem and empty results found in the recent days fetch log history
+	// it ignores skipped sites
+	List<FetchLog> fetchSiteProblems(@Param("days") int days);
+
+
+	// TODO this might not map to a fetchlog object
+	@Select({
+		"select count(*) CT, agency_cd from (",
+		" select m.* from ",
+		"       (select max(fetchlog_id) as fetchlog_id, ",
+		"               agency_cd, site_no, data_stream ",
+		"          from GW_DATA_PORTAL.fetch_log ",
+		"         group by agency_cd, site_no, data_stream) m ",
+		"   join GW_DATA_PORTAL.fetch_log f  ",
+		"     on f.fetchlog_id=m.fetchlog_id ",
+		"  where f.started_at > sysdate-#{days} ",
+		"    and problem is not null ",
+		" union ",
+		" select m.* from ",
+		"       (select max(fetchlog_id) as fetchlog_id, ",
+		"               agency_cd, site_no, data_stream ",
+		"          from GW_DATA_PORTAL.fetch_log ",
+		"         group by agency_cd, site_no, data_stream) m ",
+		"   join GW_DATA_PORTAL.fetch_log f  ",
+		"     on f.fetchlog_id=m.fetchlog_id ",
+		"  where f.started_at > sysdate-#{days} ",
+		"    and status = 'EMPY' ",
+		") group by agency_cd ",
+	""})
+	@ResultMap("BaseResultMap")
+	// returns the problem and empty count of results found in the recent days fetch log history
+	// it ignores skipped sites
+	List<FetchLog> fetchAgencyProblemCount(@Param("days") int days);
+
+
+	@Select({
+		"select * from ",
+		" (select * ",
+		"   from GW_DATA_PORTAL.fetch_log f ",
+		"  where agency_cd   = #{agency_cd} ",
+		"    and site_no     = #{site_no} ",
+		"    and data_stream = #{data_stream}",
+		"  order by fetchlog_id desc) ",
+		"where rownum <= #{amount} ",
+	""})
+	@ResultMap("BaseResultMap")
+	// returns the most recent amount of fetch log entries for the given site
+	List<FetchLog> fetchRecentProblems(@Param("agency_cd") String agency_cd, @Param("site_no") String site_no,
+			@Param("data_stream") String dataStream, @Param("amount") int amount);
+
+
+	@Select({
+		"select count(*) from (",
+		" select * from ",
+		"  (select * ",
+		"    from GW_DATA_PORTAL.fetch_log f ",
+		"   where agency_cd   = #{agency_cd} ",
+		"     and site_no     = #{site_no} ",
+		"     and data_stream = #{data_stream}",
+		"   order by fetchlog_id desc) ",
+		" where rownum <= #{amount} ",
+		") where status='DONE' ",
+	""})
+	// returns the count of successes for the most recent amount of fetch log entries for the given site
+	int fetchRecentSuccessCount(@Param("agency_cd") String agency_cd, @Param("site_no") String site_no,
+			@Param("data_stream") String dataStream, @Param("amount") int amount);
 }
