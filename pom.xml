@@ -338,7 +338,7 @@
 		          </execution>
 		        </executions>
 		      </plugin>
-		
+<!--		
 			<plugin>
 				<groupId>org.liquibase</groupId>
 				<artifactId>liquibase-maven-plugin</artifactId>
@@ -363,8 +363,8 @@
 						</goals>
 					</execution>
 				</executions>
-		
 			</plugin>
+-->			
 			<plugin>
         		<groupId>org.codehaus.mojo</groupId>
         		<artifactId>aspectj-maven-plugin</artifactId>
