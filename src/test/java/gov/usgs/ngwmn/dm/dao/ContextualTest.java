@@ -23,30 +23,30 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 // Or set environment SPRING_PROFILES_ACTIVE or SPRING_PROFILES_DEFAULT
 // @ActiveProfiles("local")
 public abstract class ContextualTest extends IntegrationTest {
-	
+
 	private static String  basedir   = "/tmp/gwdp-cache";
-	
+
 	private DataSource ds;
 
 	@Autowired
 	protected ApplicationContext ctx;
-	
-	
+
+
 	public static void setBasedir(String basedir) {
 		ContextualTest.basedir = basedir;
 	}
 	public static String getBaseDir() {
 		return basedir;
 	}
-	
+
 	@BeforeClass
 	public static void setupNaming() throws Exception {
 		final SimpleNamingContextBuilder builder = new SimpleNamingContextBuilder();
 		builder.bind(FileCache.BASEDIR_JNDI_NAME, basedir);
-		// builder.bind("java:comp/env/ngwmn_cocoon", "http://cida-wiwsc-ngwmndev.er.usgs.gov:8080/cocoon");
+		// builder.bind("java:comp/env/ngwmn_cocoon", "http://cida-eros-ngwmndev.er.usgs.gov:8080/cocoon");
 		// In the web context, a jndi resolver is configured automatically
 		// set it up as a system property for now
-		System.setProperty("ngwmn_cocoon", "http://cida-wiwsc-ngwmndev.er.usgs.gov:8080/cocoon");
+		System.setProperty("ngwmn_cocoon", "http://cida-eros-ngwmndev.er.usgs.gov:8080/cocoon");
 
 		try {
 			builder.activate();
@@ -54,10 +54,11 @@ public abstract class ContextualTest extends IntegrationTest {
 			// Set the required value into the existing context instead
 			InitialContext ctx = new InitialContext();
 			ctx.bind(FileCache.BASEDIR_JNDI_NAME, basedir);
-			ctx.bind("java:comp/env/ngwmn_cocoon", "http://cida-wiwsc-ngwmndev.er.usgs.gov:8080/cocoon");
+			ctx.bind("java:comp/env/ngwmn_cocoon", "http://cida-eros-ngwmndev.er.usgs.gov:8080/cocoon");
 		}
 	}
-	
+
+	@Override
 	public DataSource getDataSource() {
 		if (ds == null) {
 			ds = ctx.getBean("dataSource", DataSource.class);
