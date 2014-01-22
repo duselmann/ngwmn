@@ -285,7 +285,8 @@
 						<excludes>
 							<exclude>**/integration/**</exclude>
 		        			<exclude>**/functional/**</exclude>
-		        			<exclude>**/*IntegrationTest.java</exclude>
+                            <exclude>**/*IntegrationTest.java</exclude>
+                            <exclude>**/*Test.java</exclude>
 						</excludes>
 					</configuration>
 				</plugin>
