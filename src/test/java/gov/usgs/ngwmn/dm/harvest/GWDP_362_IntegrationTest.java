@@ -65,7 +65,7 @@ extends ContextualTest
 
 	// @Test
 	public void testWget_GWDP_362() throws Exception {
-		String url = "http://cida-wiwsc-javaprodp.er.usgs.gov:8080/cocoon/gin/gwdp/agency/MBMG/wfs?request=GetFeature&featureId=257423";
+		String url = "http://cida-eros-javaprodp.er.usgs.gov:8080/cocoon/gin/gwdp/agency/MBMG/wfs?request=GetFeature&featureId=257423";
 		int code = victim.wget(url);
 		System.out.printf("Got code %d\n", code);
 

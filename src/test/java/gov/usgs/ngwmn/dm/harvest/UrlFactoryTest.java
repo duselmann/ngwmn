@@ -17,18 +17,18 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration({"classpath:urlFactoryContext.xml"})
 public class UrlFactoryTest {
 
-	private static final String BASE_URL = "http://cida-wiwsc-ngwmndev.er.usgs.gov:8080/cocoon";
+	private static final String BASE_URL = "http://cida-eros-ngwmndev.er.usgs.gov:8080/cocoon";
 
 	@Autowired
 	protected ApplicationContext ctx;
 
 	private SpringUrlFactory victim;
-	
+
 	@BeforeClass
 	public static void setSystemProperty() {
-		System.setProperty("ngwmn_cocoon", BASE_URL);		
+		System.setProperty("ngwmn_cocoon", BASE_URL);
 	}
-	
+
 	@Before
 	public void setUp() throws Exception {
 		victim = ctx.getBean(SpringUrlFactory.class);
@@ -37,27 +37,27 @@ public class UrlFactoryTest {
 	@Test
 	public void testALL() {
 		WellDataType t = WellDataType.ALL;
-		
+
 		String u = victim.resolve(t, "MBMG", "1388");
-		
+
 		assertEquals(BASE_URL + "/gin/gwdp/cache/download/xls/MBMG?featureId=1388", u);
 	}
 
 	@Test
 	public void testWQ() {
 		WellDataType t = WellDataType.QUALITY;
-		
+
 		String u = victim.resolve(t, "MBMG", "1388");
-		
+
 		assertEquals(BASE_URL + "/gin/gwdp/agency/MBMG/qw?mimeType=xml&siteid=1388", u);
 	}
 
 	@Test
 	public void testWQ_for_MN_DNR() {
 		WellDataType t = WellDataType.QUALITY;
-		
+
 		String u = victim.resolve(t, "MN DNR", "210308");
-		
+
 		assertEquals(BASE_URL + "/gin/gwdp/agency/MN_DNR/qw?mimeType=xml&siteid=210308", u);
 	}
 
@@ -68,7 +68,7 @@ public class UrlFactoryTest {
 		System.out.println(url);
 		assertTrue(url.contains("qw?"));
 	}
-	
+
 	@Test
 	public void test_makeUrl_forWaterLevelData() {
 		Specifier  spec = new Specifier("USGS","WELL0",WellDataType.WATERLEVEL);
@@ -76,7 +76,7 @@ public class UrlFactoryTest {
 		System.out.println(url);
 		assertTrue(url.contains("sos?"));
 	}
-	
+
 	@Test
 	public void test_makeUrl_forLogData() {
 		Specifier  spec = new Specifier("USGS","WELL0",WellDataType.LOG);
@@ -84,7 +84,7 @@ public class UrlFactoryTest {
 		System.out.println(url);
 		assertTrue(url.contains("wfs?"));
 	}
-		
+
 	@Test
 	public void test_makeUrl_containsAgencyAndFeature() {
 		Specifier  spec = new Specifier("USGS","WELL0",WellDataType.LOG);
@@ -92,7 +92,7 @@ public class UrlFactoryTest {
 		assertTrue(url.contains(spec.getAgencyID()));
 		assertTrue(url.contains(spec.getFeatureID()));
 	}
-	
+
 	@Test
 	public void test_makeUrl_startsWithBaseUrl() {
 		Specifier  spec = new Specifier("USGS","WELL0",WellDataType.LOG);

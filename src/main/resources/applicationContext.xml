@@ -38,7 +38,7 @@
 	</bean>
 	
 	<bean id="geoserver-proxy-forward-url" class="java.lang.String">
-		<constructor-arg value="${GWDP_Portal/geoserver-proxy-forward-url:http://cida-wiwsc-ngwmndev.er.usgs.gov:8081/ngwmn-geoserver/ngwmn}"/>
+		<constructor-arg value="${GWDP_Portal/geoserver-proxy-forward-url:http://cida-eros-ngwmndev.er.usgs.gov:8081/ngwmn-geoserver/ngwmn}"/>
 	</bean>
 	
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
