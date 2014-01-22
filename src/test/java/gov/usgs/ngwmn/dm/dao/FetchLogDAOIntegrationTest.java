@@ -7,7 +7,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-public class FetchLogDAOTest extends ContextualTest {
+public class FetchLogDAOIntegrationTest extends ContextualTest {
 
 	private static final String AGENCY_CD = "USGS";
 	private static final String SITE_NO = "007";

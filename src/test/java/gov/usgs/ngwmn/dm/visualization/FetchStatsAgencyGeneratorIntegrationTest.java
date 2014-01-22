@@ -10,7 +10,7 @@ import org.junit.Test;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.google.visualization.datasource.datatable.TableCell;
 
-public class FetchStatsAgencyGeneratorTest extends ContextualTest {
+public class FetchStatsAgencyGeneratorIntegrationTest extends ContextualTest {
 
 	private FetchStatsAgencyGenerator victim;
 

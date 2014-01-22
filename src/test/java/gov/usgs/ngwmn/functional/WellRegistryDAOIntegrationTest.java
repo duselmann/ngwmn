@@ -16,7 +16,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class WellRegistryDAOTest extends ContextualTest {
+public class WellRegistryDAOIntegrationTest extends ContextualTest {
 	// test well: MN DNR:200661 
 	private static final String AGENCY_CD = "MN DNR";
 	private static final String SITE_NO = "200661";

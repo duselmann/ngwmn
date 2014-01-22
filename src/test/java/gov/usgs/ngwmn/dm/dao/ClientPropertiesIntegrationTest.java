@@ -12,7 +12,7 @@ import javax.sql.DataSource;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class ClientPropertiesTest extends ContextualTest {
+public class ClientPropertiesIntegrationTest extends ContextualTest {
 
 	@Test
 	public void testShowClientProperties() throws Exception {

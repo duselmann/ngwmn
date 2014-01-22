@@ -9,7 +9,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-public class FetchLogDaoMonitorTests extends ContextualTest {
+public class FetchLogDaoMonitorIntegrationTests extends ContextualTest {
 
 	private FetchLogDAO dao;
 	private ErrorReportBuilder rpt;
