@@ -285,7 +285,7 @@
 						<excludes>
 							<exclude>**/integration/**</exclude>
 		        			<exclude>**/functional/**</exclude>
-		        			<exclude>**/*IntegrationTest.java</exclude>
+		        			<exclude>**/*Integration*.java</exclude>
 						</excludes>
 					</configuration>
 				</plugin>
@@ -313,12 +313,11 @@
 			        	<ngwmn_cache_username>${liquibase.testdb.username}</ngwmn_cache_username>
 		        		<ngwmn_cache_pw>${liquibase.testdb.password}</ngwmn_cache_pw>
 		        	</systemPropertyVariables>
-		        	<includes>
-		        		<include>**/integration/**</include>
-		        		<include>**/functional/**</include>
-		        		<include>**/*IntegrationTest.java</include>
-		        	</includes>
 		        	<excludes>
+                            <exclude>**/integration/**</exclude>
+                            <exclude>**/functional/**</exclude>
+                            <exclude>**/*Integration*.java</exclude>
+		        	
                         <!-- too dependent on data -->
                         <exclude>**/FetchLogDaoMonitorTests.java</exclude>
 		        		<!-- too dependent on data providers -->
