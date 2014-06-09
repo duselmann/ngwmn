@@ -28,7 +28,7 @@
 		<property name="host" value="${ngwmn_smtp_host:localhost}" />
 	</bean>
 	<bean id="errorReportTemplate" class="org.springframework.mail.SimpleMailMessage">
-		<property name="from"    value="gwdp_help@usgs.gov" />
+		<property name="from"    value="lmurphy@usgs.gov" />
 		<property name="subject" value="NGWMN Data Portal Error Report" />
 	</bean>
 	<bean id="errorReportSender" class="gov.usgs.ngwmn.dm.ErrorReportSender">
