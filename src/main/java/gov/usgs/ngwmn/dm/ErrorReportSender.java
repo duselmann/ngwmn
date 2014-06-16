@@ -43,7 +43,7 @@ public class ErrorReportSender {
 
 			jmailSender.send(messageTemplate);
 
-			logger.info("Sent error report email");
+			logger.info("Sent error report email: " + msg);
 		} finally {
 
 		}
