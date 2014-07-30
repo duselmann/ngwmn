@@ -29,6 +29,15 @@
     <servlet-name>DataManager</servlet-name>
     <url-pattern>/data</url-pattern>
   </servlet-mapping>
+
+  <servlet>
+    <servlet-name>ErrorReportService</servlet-name>
+    <servlet-class>gov.usgs.ngwmn.dm.ErrorReportService</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ErrorReportService</servlet-name>
+    <url-pattern>/error-report</url-pattern>
+  </servlet-mapping>
   
 	<filter>
 		<filter-name>DownloadTokenFilter</filter-name>
