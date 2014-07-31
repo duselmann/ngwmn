@@ -4,7 +4,7 @@
 	<groupId>gov.usgs.cida</groupId>
 	<artifactId>ngwmn_cache</artifactId>
 	<packaging>war</packaging>
-	<version>2.0.18-SNAPSHOT</version>
+	<version>2.0.18</version>
 	<name>NGWMN Cache</name>
 
 	<properties>
@@ -27,7 +27,7 @@
 		<connection>scm:git:http://gitub.com/USGS-CIDA/ngmwn.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/USGS-CIDA/ngwmn.git</developerConnection>
 		<url>https://github.com/USGS-CIDA/ngwmn</url>
-	  <tag>HEAD</tag>
+	  <tag>ngwmn_cache-2.0.18</tag>
   </scm>
 	
 	<repositories>
