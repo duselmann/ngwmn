@@ -1,7 +1,5 @@
 package gov.usgs.ngwmn.ogc;
 
-import gov.usgs.ngwmn.NotImplementedException;
-import static gov.usgs.ngwmn.ogc.Sandbox.CONNECTION_TIMEOUT_MILLIS;
 import java.io.BufferedReader;
 
 import java.io.IOException;
@@ -10,7 +8,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.text.MessageFormat;
 
@@ -88,7 +85,7 @@ public class SOSService extends OGCService {
         // make the call			
         HttpURLConnection connection
                 = (HttpURLConnection) queryURL.openConnection();
-        connection.setConnectTimeout(CONNECTION_TIMEOUT_MILLIS);
+        connection.setConnectTimeout(2000);
         connection.setRequestMethod("GET");
 
         connection.connect();
