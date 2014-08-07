@@ -1,10 +1,17 @@
 package gov.usgs.ngwmn.ogc;
 
 import gov.usgs.ngwmn.NotImplementedException;
+import static gov.usgs.ngwmn.ogc.Sandbox.CONNECTION_TIMEOUT_MILLIS;
+import java.io.BufferedReader;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
+import java.net.URL;
 import java.text.MessageFormat;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,7 +29,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -42,12 +53,116 @@ public class SOSService extends OGCService {
 	static private Logger logger = LoggerFactory.getLogger(SOSService.class);
 	public final String sosFeatureXformName = "/gov/usgs/ngwmn/geoserver-2-sos.xsl";
 
+    /**
+     * Delegates this call to the OGC-IE SOS getCapabilties web service. 
+     * Yes, this is close coupling, but consistency of XML representation is
+     * probably more important. (If you want to be persnickety, you can say 
+     * "Externally indistinguishable from a call to" instead of "Delegates this
+     * call to".)
+     * 
+     * Note:
+     * This method can be called via the RequestMapping annotation; it is also 
+     * directly invoked from this class's callService method.
+     * 
+     * @param out The OutputStream to which the getCapabilities XML is written
+     *      when the call to OGC-IE is successful
+     * @return the URL of the OGC-IE call: prefixed with the status code + a 
+     *      single space if the response was received, or with "000 " if a 
+     *      problem prevented that.
+     * @throws java.net.MalformedURLException
+     * @throws java.io.IOException
+     */
 	@RequestMapping(params={"REQUEST=GetCapabilities"})
-	public void getCapabilities(
+	public String getCapabilities(
 			OutputStream out
-			) {
-		// TODO deliver static file
-		throw new NotImplementedException();
+			) throws MalformedURLException, IOException
+    {
+        // TODO this is a perfectly serviceable way to handle the delegation
+        // to OGC-IE, but it should probably be refactored into a general
+        // delegation method somewhere.
+        String urlString = 
+                "http://cida-eros-ngwmndev.er.usgs.gov:8080/ogc-ie/sosbbox?request=GetCapabilities";
+        String retval = "000 " + urlString;
+            
+        URL queryURL = new URL(urlString);
+        // make the call			
+        HttpURLConnection connection
+                = (HttpURLConnection) queryURL.openConnection();
+        connection.setConnectTimeout(CONNECTION_TIMEOUT_MILLIS);
+        connection.setRequestMethod("GET");
+
+        connection.connect();
+
+        // status
+        int status = connection.getResponseCode();
+
+        // if we didn't blow up, replace "000 " with the actual return code
+        retval = status + " " + urlString;
+
+        // headers
+        Map<String, List<String>> rawheaders = connection.getHeaderFields();
+        // convert map of Lists to map of Sets
+        Map<String, Set<String>> headers = new HashMap<String, Set<String>>();
+        for (Map.Entry<String, List<String>> entry : rawheaders.entrySet())
+        {
+            headers.put(entry.getKey(), new HashSet<String>(entry.getValue()));
+        }
+
+        // message body
+        InputStream responseStream = connection.getInputStream();
+
+        // make a String out of it
+        StringBuilder builder = new StringBuilder();
+        BufferedReader bufReader = 
+                new BufferedReader(new InputStreamReader(responseStream, "UTF-8"));
+        String line = bufReader.readLine();
+        while(line != null)
+        {
+            builder.append(line);builder.append('\n');
+            line = bufReader.readLine();
+        }
+        String msgBody = builder.toString();
+
+
+
+        if (status >= 500)
+        {
+            StringBuilder error = new StringBuilder();
+            error.append("Unable to obtain SOS getCapabilities() information. ");
+            error.append("Reason: internal server error:\n");
+            error.append(msgBody);
+            logger.error(error.toString());
+        }
+        else if (399 < status && status <= 499 )
+        {
+            StringBuilder badrequest = new StringBuilder();
+            badrequest.append("Unable to obtain SOS getCapabilities() information. ");
+            badrequest.append("Reason: bad request:\n");
+            badrequest.append(urlString);
+            badrequest.append(";\n");
+            badrequest.append(msgBody);
+            logger.error(badrequest.toString());
+        }
+        else if (199 < status && status <= 299 )
+        {
+            // success!
+            out.write(msgBody.getBytes());
+        }
+        else
+        {
+            // weirdness
+            StringBuilder weirdstatus = new StringBuilder();
+            weirdstatus.append("Unable to obtain SOS getCapabilities() information. ");
+            weirdstatus.append("Reason: unexpected status code ");
+            weirdstatus.append(line);
+            weirdstatus.append("returned from OGC-IE webservice:\n");
+            weirdstatus.append(urlString);
+            weirdstatus.append(";\n");
+            weirdstatus.append(msgBody);
+            logger.error(weirdstatus.toString());
+        }
+        
+        return retval;
 	}
 
 	@RequestMapping(params={"!REQUEST"},method={RequestMethod.POST})
@@ -283,7 +398,24 @@ public class SOSService extends OGCService {
 			else if ("GetCapabilities".equals(opname)) {
 				// case "GetCapabilities": {
 				response.setContentType("text/xml");
-				getCapabilities(response.getOutputStream());
+                try
+                {
+                    String outcome = getCapabilities(response.getOutputStream());
+                    int statusCode = Integer.parseInt(outcome.substring(0,3));
+                    if (statusCode < 200 || statusCode > 299)
+                    {
+                        // this was a failure
+                        StringBuilder errmsg = new StringBuilder();
+                        errmsg.append("Failure to obtain getCapabilities from '");
+                        errmsg.append(outcome.substring(4));
+                        errmsg.append("'.");
+                        response.sendError(statusCode, errmsg.toString());
+                    }
+                }
+                catch (MalformedURLException mux)
+                {
+                    response.sendError(500, "Internal configuration error: OGC-IE URL.");
+                }
 				// break;
 			}
 			else {
