@@ -69,7 +69,7 @@ public class SOSService extends OGCService {
      * @throws java.net.MalformedURLException
      * @throws java.io.IOException
      */
-	@RequestMapping(params={"REQUEST=GetCapabilities"})
+	@RequestMapping(params={"request=GetCapabilities"})
 	public String getCapabilities(
 			OutputStream out
 			) throws MalformedURLException, IOException
