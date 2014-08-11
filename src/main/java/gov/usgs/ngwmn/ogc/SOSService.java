@@ -35,8 +35,6 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.util.xml.SimpleNamespaceContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -52,9 +50,6 @@ public class SOSService extends OGCService {
 	static private Logger logger = LoggerFactory.getLogger(SOSService.class);
 	public final String sosFeatureXformName = "/gov/usgs/ngwmn/geoserver-2-sos.xsl";
     
-    @Autowired
-    private Environment env;
-
     /**
      * Delegates this call to the OGC-IE SOS getCapabilties web service. 
      * Yes, this is close coupling, but consistency of XML representation is
@@ -83,10 +78,7 @@ public class SOSService extends OGCService {
         // to OGC-IE, but it should probably be refactored into a general
         // delegation method somewhere.
         String urlString = 
-                //"http://cida-eros-ngwmndev.er.usgs.gov:8080/ogc-ie/sosbbox?request=GetCapabilities";
-                env.getProperty("ogc_services") + "?request=GetCapabilities";
-        
-        logger.info(urlString);
+                "http://cida-eros-ngwmnprod.er.usgs.gov:8080/ogc-ie/sosbbox?request=GetCapabilities";
         
         String retval = "000 " + urlString;
             
